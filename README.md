@@ -38,8 +38,6 @@ Clone repository
 
 git clone https://github.com/KarelVanek90/todo-fullstack-app.git
 
-mkdir client server
-
 Install backend
 
 cd server
