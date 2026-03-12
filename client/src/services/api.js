@@ -20,6 +20,25 @@ export const loginUser = async (form) => {
   }
 };
 
+export const registrUser = async (form) => {
+  try {
+    const res = await fetch(`${API_URL}/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(form),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.message || "Registration failed");
+    }
+    return data;
+  } catch (err) {
+    throw new Error(err.message || "Registration failed");
+  }
+};
+
 export const getTodos = async (pageNumber = 1) => {
   const token = getToken();
 

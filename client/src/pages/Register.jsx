@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { registrUser } from "../services/api";
 
 function Register() {
   const navigate = useNavigate();
@@ -19,24 +20,32 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:5000/api/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        alert(data.message);
-        return;
-      }
-
+      await registrUser(form);
       alert("Registrace proběhla");
       navigate("/");
     } catch (err) {
       setError(err.message || "Registration failed");
     }
+
+    // try {
+    //   const res = await fetch("http://localhost:5000/api/register", {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify(form),
+    //   });
+    //   const data = await res.json();
+    //   if (!res.ok) {
+    //     alert(data.message);
+    //     return;
+    //   }
+
+    //   alert("Registrace proběhla");
+    //   navigate("/");
+    // } catch (err) {
+    //   setError(err.message || "Registration failed");
+    // }
   };
 
   return (

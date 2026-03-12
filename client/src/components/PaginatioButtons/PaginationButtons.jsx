@@ -2,7 +2,7 @@ import React from "react";
 
 const PaginationButtons = ({ page, pages, setPage }) => {
   return (
-    <div className="flex gap-2 justify-between ">
+    <div className="flex gap-2 justify-between">
       <button
         disabled={page === 1}
         onClick={() => setPage(page - 1)}
