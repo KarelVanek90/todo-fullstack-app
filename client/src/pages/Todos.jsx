@@ -21,11 +21,18 @@ function Todos() {
   const [error, setError] = useState("");
   const [pages, setPages] = useState(1);
   const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(true);
 
   const loadTodos = useCallback(async () => {
-    const data = await getTodos(page);
-    setTasks(data.docs);
-    setPages(data.pages);
+    try {
+      const data = await getTodos(page);
+      setTasks(data.docs);
+      setPages(data.pages);
+    } catch (err) {
+      console.log(err.message);
+    } finally {
+      setLoading(false);
+    }
   }, [page]);
 
   useEffect(() => {
@@ -116,6 +123,7 @@ function Todos() {
           data={filteredList}
           handleEdit={handleEdit}
           handleDelete={handleDelete}
+          loading={loading}
         />
       </div>
       {error && <p className="text-red-500 text-center mt-3">{error}</p>}

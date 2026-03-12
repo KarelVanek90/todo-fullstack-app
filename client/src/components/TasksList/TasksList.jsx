@@ -1,7 +1,11 @@
 import React from "react";
 import TaskItem from "../TaskItem/TaskItem";
 
-const TasksList = ({ data, handleEdit, handleDelete }) => {
+const TasksList = ({ data, handleEdit, handleDelete, loading }) => {
+  if (loading) {
+    return <p>Načítám...</p>;
+  }
+
   return (
     <div className="flex flex-col gap-3 min-h-[400px] max-h-[400px] overflow-y-auto">
       {data.length === 0 ? (
