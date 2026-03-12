@@ -40,9 +40,6 @@ export const registrUser = async (form) => {
 };
 
 export const getTodos = async (pageNumber = 1) => {
-  const token = getToken();
-
-  console.log("TOKEN:", token);
   try {
     const res = await fetch(`${API_URL}/todos?page=${pageNumber}&limit=10`, {
       headers: {
@@ -82,8 +79,9 @@ export const createTodo = async (todo) => {
 };
 
 export const deleteTodo = async (id) => {
+  cd;
   try {
-    const res = await fetch(`http://localhost:5000/api/todos/${id}`, {
+    const res = await fetch(`${API_URL}/todos/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${getToken()}`,
@@ -101,7 +99,7 @@ export const deleteTodo = async (id) => {
 
 export const updateTodo = async (id, updated) => {
   try {
-    const res = await fetch(`http://localhost:5000/api/todos/${id}`, {
+    const res = await fetch(`${API_URL}/todos/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
