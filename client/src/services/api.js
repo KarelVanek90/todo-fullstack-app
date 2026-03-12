@@ -12,8 +12,7 @@ export const loginUser = async (form) => {
     });
     if (!res.ok) {
       const data = await res.json();
-      throw new Error(data.message || "
-Login failed");
+      throw new Error(data.message || "Login failed");
     }
     return await res.json();
   } catch (err) {
