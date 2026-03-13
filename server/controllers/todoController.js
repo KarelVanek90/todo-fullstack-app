@@ -37,10 +37,22 @@ const getTodos = async (req, res) => {
       userId: req.user.userId,
     });
 
+    const completed = await Todo.countDocuments({
+      userId: req.user.userId,
+      completed: true,
+    });
+
+    const active = await Todo.countDocuments({
+      userId: req.user.userId,
+      completed: false,
+    });
+
     res.json({
       msg: "Data uploaded successfully",
       docs: todos,
       total,
+      completed,
+      active,
       page,
       pages: Math.ceil(total / limit),
     });

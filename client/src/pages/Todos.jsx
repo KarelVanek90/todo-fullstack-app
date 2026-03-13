@@ -22,11 +22,21 @@ function Todos() {
   const [pages, setPages] = useState(1);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    completed: 0,
+    active: 0,
+    total: 0,
+  });
 
   const loadTodos = useCallback(async () => {
     try {
       const data = await getTodos(page);
       setTasks(data.docs);
+      setStats({
+        completed: data.completed,
+        active: data.active,
+        total: data.total,
+      });
       setPages(data.pages);
     } catch (err) {
       console.log(err.message);
@@ -93,7 +103,7 @@ function Todos() {
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       {/* HEADER */}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Úkolníček</h1>
@@ -106,8 +116,12 @@ function Todos() {
         </button>
       </div>
       {/* FILTER */}
-      <div className="flex justify-center">
-        <FilterButtons setFilter={setFilter} filter={filter} />
+      <div className="flex justify-center ">
+        <FilterButtons
+          setFilter={setFilter}
+          filter={filter}
+          setPage={setPage}
+        />
       </div>
       {/* FORM */}
       <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
@@ -117,8 +131,14 @@ function Todos() {
           handleChange={handleChange}
         />
       </div>
+      {/** STATISTICS */}
+      <div className="flex justify-between bg-gray-100 p-1 rounded-lg shadow-md">
+        <p className=" text-sm"> Splněno: {stats.completed}</p>
+        <p className=" text-sm">Nesplněno: {stats.active}</p>
+        <p className=" text-sm">Celkem: {stats.total}</p>
+      </div>
       {/* TASK LIST */}
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3 ">
         <TasksList
           data={filteredList}
           handleEdit={handleEdit}

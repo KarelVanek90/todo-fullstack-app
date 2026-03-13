@@ -79,7 +79,6 @@ export const createTodo = async (todo) => {
 };
 
 export const deleteTodo = async (id) => {
-  cd;
   try {
     const res = await fetch(`${API_URL}/todos/${id}`, {
       method: "DELETE",
