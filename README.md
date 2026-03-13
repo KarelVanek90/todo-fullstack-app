@@ -22,11 +22,12 @@ Backend
 - login authentication
 - CRUD todos
 - pagination
-- search todos
+- filter todos
 - protected routes
 
 ## Future improvements
 
+- search todos
 - user roles
 - task notifications
 - calendar view
