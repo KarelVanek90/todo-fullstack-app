@@ -27,6 +27,7 @@ Backend
 
 ## Future improvements
 
+- search todos
 - user roles
 - task notifications
 - calendar view
