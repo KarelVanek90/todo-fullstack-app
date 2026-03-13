@@ -22,7 +22,7 @@ Backend
 - login authentication
 - CRUD todos
 - pagination
-- search todos
+- filter todos
 - protected routes
 
 ## Future improvements
