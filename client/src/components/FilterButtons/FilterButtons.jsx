@@ -1,8 +1,9 @@
 import React from "react";
 
-const FilterButtons = ({ filter, setFilter, setPage }) => {
+const FilterButtons = ({ filter, setFilter, setPage, setTasks }) => {
   const handleFilter = (query) => {
     setFilter(query);
+    setTasks([]);
     setPage(1);
   };
 

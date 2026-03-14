@@ -25,23 +25,30 @@ const getTodos = async (req, res) => {
   try {
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
+    const filter = req.query.filter || "all";
 
     const skip = (page - 1) * limit;
 
-    const todos = await Todo.find({ userId: req.user.userId })
+    const query = { userId: req.user.userId };
+
+    if (filter === "completed") {
+      query.completed = true;
+    } else if (filter === "active") {
+      query.completed = false;
+    }
+
+    const todos = await Todo.find(query)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
 
-    const total = await Todo.countDocuments({
-      userId: req.user.userId,
-    });
+    const totalItems = await Todo.countDocuments(query);
 
+    const total = await Todo.countDocuments({ userId: req.user.userId });
     const completed = await Todo.countDocuments({
       userId: req.user.userId,
       completed: true,
     });
-
     const active = await Todo.countDocuments({
       userId: req.user.userId,
       completed: false,
@@ -54,13 +61,11 @@ const getTodos = async (req, res) => {
       completed,
       active,
       page,
-      pages: Math.ceil(total / limit),
+      pages: Math.ceil(totalItems / limit),
     });
   } catch (err) {
     console.log(err.message);
-    res.status(500).json({
-      message: "Failed to fetch todos",
-    });
+    res.status(500).json({ message: "Failed to fetch todos" });
   }
 };
 

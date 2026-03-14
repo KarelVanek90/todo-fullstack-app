@@ -39,13 +39,22 @@ export const registrUser = async (form) => {
   }
 };
 
-export const getTodos = async (pageNumber = 1) => {
+export const getTodos = async (
+  pageNumber = 1,
+  options = {},
+  search = "all",
+) => {
+  const { signal } = options;
   try {
-    const res = await fetch(`${API_URL}/todos?page=${pageNumber}&limit=10`, {
-      headers: {
-        Authorization: `Bearer ${getToken()}`,
+    const res = await fetch(
+      `${API_URL}/todos?page=${pageNumber}&limit=10&filter=${search}`,
+      {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+        signal,
       },
-    });
+    );
 
     if (!res.ok) {
       const data = await res.json();

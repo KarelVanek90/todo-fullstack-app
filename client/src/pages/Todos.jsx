@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import TasksList from "../components/TasksList/TasksList";
 import FormTask from "../components/FormTask/FormTask";
@@ -22,28 +22,48 @@ function Todos() {
   const [pages, setPages] = useState(1);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const abortControllerRef = useRef(null);
   const [stats, setStats] = useState({
     completed: 0,
     active: 0,
     total: 0,
   });
 
-  const loadTodos = useCallback(async () => {
-    try {
-      const data = await getTodos(page);
-      setTasks(data.docs);
-      setStats({
-        completed: data.completed,
-        active: data.active,
-        total: data.total,
-      });
-      setPages(data.pages);
-    } catch (err) {
-      console.log(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [page]);
+  const loadTodos = useCallback(
+    async (showLoader = true) => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+
+      try {
+        if (showLoader) setLoading(true);
+
+        const data = await getTodos(
+          page,
+          { signal: controller.signal },
+          filter,
+        );
+
+        setTasks(data.docs);
+        setStats({
+          completed: data.completed,
+          active: data.active,
+          total: data.total,
+        });
+        setPages(data.pages);
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          console.log(err.message);
+        }
+      } finally {
+        setLoading(false);
+      }
+    },
+    [page, filter],
+  );
 
   useEffect(() => {
     if (!token) {
@@ -51,13 +71,13 @@ function Todos() {
       return;
     }
     loadTodos();
-  }, [token, loadTodos, navigate]);
 
-  const filteredList = tasks.filter((item) => {
-    if (filter === "completed") return item.completed;
-    if (filter === "active") return !item.completed;
-    return true;
-  });
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, [token, loadTodos, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -78,11 +98,13 @@ function Todos() {
       setError(err.message || "Failed to created task");
     }
   };
-
   const handleEdit = async (id, updated) => {
     try {
       const data = await updateTodo(id, updated);
+
       setTasks((prev) => prev.map((task) => (task._id === id ? data : task)));
+
+      loadTodos(false);
     } catch (err) {
       setError(err.message || "Failed to update task");
     }
@@ -121,6 +143,7 @@ function Todos() {
           setFilter={setFilter}
           filter={filter}
           setPage={setPage}
+          setTasks={setTasks}
         />
       </div>
       {/* FORM */}
@@ -140,7 +163,7 @@ function Todos() {
       {/* TASK LIST */}
       <div className="flex flex-col gap-3 ">
         <TasksList
-          data={filteredList}
+          data={tasks}
           handleEdit={handleEdit}
           handleDelete={handleDelete}
           loading={loading}
