@@ -114,6 +114,7 @@ function Todos() {
     try {
       await deleteTodo(id);
       setTasks((prev) => prev.filter((task) => task._id !== id));
+      loadTodos(false)
     } catch (err) {
       setError(err.message || "Delete failed");
     }
